@@ -124,6 +124,6 @@ func init() {
 	// is called directly, e.g.:
 	fetchCmd.Flags().StringVar(&uri, "uri", "", "The uri of the tarball to fetch")
 	fetchCmd.Flags().StringVar(&sha256, "sha256", "", "The sha256 of the tarball")
-	fetchCmd.Flags().StringVar(&version, "version", "", "The version of the tarball")
-	fetchCmd.Flags().StringVar(&release, "release", "", "The release of the tarball")
+	fetchCmd.Flags().StringVar(&version, "version", "0.0.0", "The version of the tarball")
+	fetchCmd.Flags().StringVar(&release, "release", "1", "The release of the tarball")
 }
