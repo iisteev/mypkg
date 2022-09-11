@@ -73,30 +73,27 @@ func (s *PackageDesc) InstallStep(shell *Shell, dir string) error {
 }
 
 func addToArchive(file File, installDir string, wr *archiver.TarXz) error {
-	info, err := os.Stat(file.Path)
+	info, err := os.Lstat(file.Path)
 	if err != nil {
 		return err
 	}
 
-	if err != nil {
-		return err
-	}
 	absPath := fmt.Sprintf("%s/%s", installDir, file.Path)
 	// open the file
 	ofile, err := os.Open(absPath)
 	if err != nil {
 		return err
 	}
+	defer ofile.Close()
 	// write it to the archive
-	err = wr.Write(archiver.File{
+	return wr.Write(archiver.File{
 		FileInfo: archiver.FileInfo{
 			FileInfo:   info,
 			CustomName: file.Path,
+			SourcePath: file.Path,
 		},
 		ReadCloser: ofile,
 	})
-	ofile.Close()
-	return err
 }
 
 func (s *PackageDesc) Archive(installDir, dest, prefix string) error {
