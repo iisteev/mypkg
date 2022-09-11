@@ -59,8 +59,8 @@ var fetchCmd = &cobra.Command{
 	Short: "create a description file with provided url",
 	Long: `Creates a pre defined yaml description file.
 
-if the flag --sha256 is not provided then the cli will try to fetch from the given url and calculate the its 256 sum.
-Other parametres should be completed before build.
+If the flag --sha256 is not provided then the cli will try to fetch from the given url and calculate its sha256 sum.
+Other parameters should be completed before build.
 
 example:
     mypkg fetch htop
