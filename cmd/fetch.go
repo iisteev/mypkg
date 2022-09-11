@@ -38,7 +38,7 @@ name     : {{.Name}}
 version  : {{.Version}}
 release  : {{.Release}}
 source   :
-  uri: {{.Uri}}
+  uri: {{.URI}}
   sha256: {{.SHA256}}
 setup    :
   - $configure
