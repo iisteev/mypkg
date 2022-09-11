@@ -1,0 +1,6 @@
+*.tar.*
+.DS_Store
+compiled
+mypkg-*-*
+*~
+dist

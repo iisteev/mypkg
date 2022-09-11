@@ -1,0 +1,16 @@
+name     : autoconf
+version  : 2.69
+release  : 1
+homePage : https://www.gnu.org/software/autoconf
+licence  : GPL-2.0-or-later
+source   :
+  uri: https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz
+  sha256: 954bd69b391edc12d6a4a51a2dd1476543da5c6bbf05a95b59dc0dd6fd4c2969 
+setup    :
+  - sed -i .in.orig s/libtoolize/llibtoolize/g ./bin/autoreconf.in
+  - sed -i .1.orig s/libtoolize/llibtoolize/g ./man/autoreconf.1
+  - $configure
+build    :
+  - $make
+install  :
+  - $make_install

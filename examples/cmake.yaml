@@ -1,0 +1,32 @@
+name     : cmake
+version  : 3.19.5
+release  : 1
+source   :
+  uri: https://github.com/Kitware/CMake/releases/download/v3.19.5/cmake-3.19.5.tar.gz 
+  sha256: c432296eb5dec6d71eae15d140f6297d63df44e9ffe3e453628d1dc8fc4201ce 
+setup    :
+  - export CMAKE_CUSTOM=${BUILD_DIR}/custom.cmake
+  - echo "set(LibArchive_INCLUDE_DIR \"${PREFIX}/include\" CACHE PATH \"The LibArchive include directory\" FORCE)" >> ${CMAKE_CUSTOM}
+  - echo "set(LibArchive_LIBRARY \"${PREFIX}/lib/libarchive.dylib\" CACHE FILEPATH \"The LibArchive Library\" FORCE)" >> ${CMAKE_CUSTOM}
+  - echo "set(LIBLZMA_INCLUDE_DIR \"${PREFIX}/include\" CACHE PATH \"The lzma include directory\" FORCE)" >> ${CMAKE_CUSTOM}
+  - echo "set(LIBLZMA_LIBRARY \"${PREFIX}/lib/liblzma.dylib\" CACHE FILEPATH \"The lzma Library\" FORCE)" >> ${CMAKE_CUSTOM}
+  - ./configure --prefix=${PREFIX}
+                --no-qt-gui
+                --docdir=/share/doc/cmake
+                --mandir=/share/man
+                --sphinx-man
+                --parallel=${NBJOBS}
+                --system-libs
+                --no-system-librhash
+                --no-system-jsoncpp
+                --no-system-libuv
+                --init=${CMAKE_CUSTOM}
+build    :
+  - $make
+install  :
+  # - export INSTALL_PATH=$(echo ${INSTALL_DIR}/${PREFIX} | sed 's_/_\\/_g')
+  # - export PKG_BUILD_PATH=$(find $BUILD_DIR -iname "*cmake*" -type d -maxdepth 1)
+#  - sed -i .orig "1s/^/set(CMAKE_INSTALL_PREFIX \"${INSTALL_PATH}\") /" ${PKG_BUILD_PATH}/cmake_install.cmake
+  - $make_install
+  - rm -rf $INSTALL_DIR/${PREFIX}/share/doc
+

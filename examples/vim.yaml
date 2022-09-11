@@ -1,0 +1,31 @@
+name     : vim
+version  : 8.2.2575
+release  : 1
+homePage : https://www.vim.org/
+licence  : Vim
+source   :
+  uri: https://github.com/vim/vim/archive/v8.2.2575.tar.gz
+  sha256: b68e7d9460bfc56e7dbfe1f9cf0d4f44818c7ac8fa3c32b308b4bc8f16289435
+setup    :
+  - make clean distclean
+  - ./configure ${CONF_OPTS}
+      --enable-multibyte
+      --with-tlib=ncurses
+      --with-compiledby=mypkg
+      --enable-cscope
+      --enable-terminal
+      --enable-perlinterp
+      --enable-rubyinterp
+      --enable-python3interp=dynamic
+      --enable-pythoninterp=dynamic
+      --enable-gui=no
+      --without-x
+      --enable-luainterp
+      --with-ruby-command=/usr/bin/ruby
+      --with-python3-command=/usr/bin/python3
+      --with-developer-dir=/Library/Developer/CommandLineTools
+build    :
+  - $make
+install  :
+  - $make_install
+

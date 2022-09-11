@@ -1,0 +1,17 @@
+name     : htop
+version  : 3.0.5
+release  : 1
+homePage : https://htop.dev/
+licence  : GPL-2.0-or-later
+source   :
+  uri: https://github.com/htop-dev/htop/archive/3.0.5.tar.gz
+  sha256: 4c2629bd50895bd24082ba2f81f8c972348aa2298cc6edc6a21a7fa18b73990c
+setup    :
+  - sed -i .bak.sh s/glibtoolize/llibtoolize/g ./autogen.sh
+  - ./autogen.sh
+  - $configure
+build    :
+  - $make
+install  :
+  - $make_install
+

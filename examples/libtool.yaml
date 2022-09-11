@@ -1,0 +1,20 @@
+name     : libtool
+version  : 2.4.6
+release  : 1
+homePage : https://www.gnu.org/software/libtool/
+licence  : GPL-2.0-or-later
+source   :
+  uri: https://ftp.gnu.org/gnu/libtool/libtool-2.4.6.tar.xz
+  sha256: 7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f
+setup    :
+  - ./configure ${CONF_OPTS}
+    --disable-static
+    --disable-dependency-tracking
+    --enable-ltdl-install
+    --program-prefix=l
+build    :
+  - $make
+install :
+  - $make_install
+  - ln -s ${PREFIX}/bin/llibtoolize ${PREFIX}/bin/libtoolize
+  - ln -s ${PREFIX}/bin/llibtool ${PREFIX}/bin/libtool

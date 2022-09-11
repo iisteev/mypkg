@@ -1,0 +1,16 @@
+name     : xz
+version  : 5.2.5
+release  : 1
+source   :
+  uri: https://downloads.sourceforge.net/project/lzmautils/xz-5.2.5.tar.gz
+  sha256: f6f4910fd033078738bd82bfba4f49219d03b17eb0794eb91efbae419f4aba10
+setup    :
+  - ./configure ${CONF_OPTS}
+      --disable-debug
+      --disable-dependency-tracking
+      --disable-silent-rules
+build    :
+  - $make
+install  :
+  - $make_install
+
