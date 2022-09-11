@@ -32,7 +32,7 @@ fi
 # Build binaries
 # shellcheck disable=SC2086
 CGO_ENABLED=0 GOGC=off GOOS=$BUILD_OS GOARCH=$BUILD_ARCH go install ${FLAGS[*]} -ldflags "-s -w \
-    -X mypkg/cmd.Version=$VERSION \
-    -X mypkg/cmd.BuildDate=$DATE" \
+    -X github.com/iisteev/mypkg/cmd.Version=$VERSION \
+    -X github.com/iisteev/mypkg/cmd.BuildDate=$DATE" \
     -a -installsuffix nocgo mypkg
 

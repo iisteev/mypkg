@@ -28,9 +28,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/iisteev/mypkg/pkg/mpkg"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"mypkg/pkg/mpkg"
 )
 
 // removeCmd represents the remove command

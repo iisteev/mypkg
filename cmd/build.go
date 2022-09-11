@@ -29,7 +29,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"mypkg/pkg/mpkg"
+	"github.com/iisteev/mypkg/pkg/mpkg"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

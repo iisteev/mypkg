@@ -28,9 +28,9 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/iisteev/mypkg/pkg/mpkg"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"mypkg/pkg/mpkg"
 )
 
 var fetchTemplate = `---

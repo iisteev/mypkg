@@ -1,4 +1,4 @@
-module mypkg
+module github.com/iisteev/mypkg
 
 go 1.15
 

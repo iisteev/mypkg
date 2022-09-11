@@ -28,10 +28,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/iisteev/mypkg/pkg/mpkg"
 	"github.com/mholt/archiver/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"mypkg/pkg/mpkg"
 )
 
 // installCmd represents the install command
