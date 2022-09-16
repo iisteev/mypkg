@@ -79,6 +79,10 @@ func GetFileType(path string) string {
 	return "data"
 }
 
+func IsExit(path string) bool {
+	return !IsNotExist(path)
+}
+
 func IsNotExist(path string) bool {
 	_, err := os.Stat(path)
 	return os.IsNotExist(err)

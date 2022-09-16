@@ -59,6 +59,16 @@ func (s *Source) Download(filepath string) error {
 	return err
 }
 
+func (s *Source) DownloadIfNoCache(filepath string) error {
+	if IsExit(filepath) {
+		err := s.Verify(filepath)
+		if err == nil {
+			return nil
+		}
+	}
+	return s.Download(filepath)
+}
+
 // Verify verify the sha256 of a file, return error if mismatch
 func (s *Source) Verify(filepath string) error {
 	sum, err := GetHashString(filepath)
