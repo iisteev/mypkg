@@ -92,13 +92,14 @@ $make_install  : make install DESTDIR=${INSTALL_DIR-${prefix}} ${MAKE_INSTALL_OP
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
-			log.Fatal("Non or more than one argument provide. Accepting ONLY one argument")
+			log.Fatal("Non or more than one argument provided. Accepting ONLY one argument")
 		}
-		// We read the config
+
+		// Read application file definition
 		readFileDefinition(&args[0])
-		tarballDir := getKeyFromConf("buildDir")
+		buildDir := getKeyFromConf("buildDir")
 		// Check if dbdir exists, if not, create it
-		if err := mpkg.CreateDirIfNotExist(tarballDir); err != nil {
+		if err := mpkg.CreateDirIfNotExist(buildDir); err != nil {
 			log.Fatalln(err)
 		}
 		installDBDir := getKeyFromConf("installDBDir")
@@ -106,60 +107,73 @@ $make_install  : make install DESTDIR=${INSTALL_DIR-${prefix}} ${MAKE_INSTALL_OP
 		if err := mpkg.CreateDirIfNotExist(installDBDir); err != nil {
 			log.Fatalln(err)
 		}
+		baseFileName := path.Base(packageDesc.Source.URI)
+
+		var destinationFileName string
 		// Prepare tarball
-		// Download the tarball
-		base := path.Base(packageDesc.Source.URI)
-		temptarball := filepath.Join("/tmp", base)
-		if err := packageDesc.Source.Download(temptarball); err != nil {
-			log.Fatalf("Could not download tarball; %v\n", err)
+		if packageDesc.Source.Decompressed {
+			destinationFileName = filepath.Join(buildDir, baseFileName)
+		} else {
+			destinationFileName = filepath.Join("/tmp", baseFileName)
 		}
-		log.Infof("File downloaded in %s\n", temptarball)
+		// Download the tarball
+		if err := packageDesc.Source.DownloadIfNoCache(destinationFileName); err != nil {
+			log.Fatalf("Could not download file; %v\n", err)
+		}
+		log.Infof("File downloaded in %s\n", destinationFileName)
 		// Verify the tarball
-		if err := packageDesc.Source.Verify(temptarball); err != nil {
-			log.Fatalf("Could not verify tarball; %v\n", err)
+		if err := packageDesc.Source.Verify(destinationFileName); err != nil {
+			log.Fatalf("Could not verify file; %v\n", err)
 		}
 		log.Info("Integrity OK")
-		// unpack the tarball
-		if err := packageDesc.Source.Unpack(temptarball, tarballDir); err != nil {
-			log.Fatalf("Could not unpack tarball; %v\n", err)
+		packageBuildDir := buildDir
+		if !packageDesc.Source.Decompressed {
+			// unpack the tarball
+			if err := packageDesc.Source.Unpack(destinationFileName, buildDir); err != nil {
+				log.Fatalf("Could not unpack tarball; %v\n", err)
+			}
+			log.Infof("Tarball unpacked in %v\n", buildDir)
+			// look for the unpacked tarball folder in destination directory
+			folders, err := ioutil.ReadDir(buildDir)
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(folders) != 1 {
+				log.Warnf("We should find only one directory in %v! Anyway using it as a package source\n", buildDir)
+			} else {
+				candidateDir := folders[0]
+				if !candidateDir.IsDir() {
+					log.Fatalf("%v is not a directory\n", candidateDir.Name())
+				}
+				packageBuildDir = filepath.Join(buildDir, candidateDir.Name())
+			}
 		}
-		log.Infof("Tarball unpacked in %v\n", tarballDir)
-		// look for the unpacked tarball folder in destination directory
-		folders, err := ioutil.ReadDir(tarballDir)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if len(folders) != 1 {
-			log.Fatalf("We chould find only one directory in %v\n", tarballDir)
-		}
-		candidateFile := folders[0]
-		if !candidateFile.IsDir() {
-			log.Fatalf("%v is not a directory\n", candidateFile.Name())
-		}
-		unpackedDir := filepath.Join(tarballDir, candidateFile.Name())
+
 		// get prefix and installation directory
 		prefixDir := getKeyFromConf("prefix")
 		installDir := getKeyFromConf("installDir")
+		fullInstallDir := filepath.Join(installDir, prefixDir)
 		command := mpkg.NewShell()
 		command.AddArgs("PREFIX=" + prefixDir)
-		command.AddArgs("BUILD_DIR=" + tarballDir)
+		command.AddArgs("BUILD_DIR=" + buildDir)
 		command.AddArgs("INSTALL_DIR=" + installDir)
+		command.AddArgs("FULL_INSTALL_DIR=" + fullInstallDir)
 		command.AddArgs("PKG_NAME=" + packageDesc.GetFullName())
-		command.AddArgs("PKG_BUILD_DIR=" + unpackedDir)
+		command.AddArgs("PKG_BUILD_DIR=" + packageBuildDir)
 		environment := vcfg.GetStringSlice("environment")
 		for _, value := range environment {
 			command.AddArgs(value)
 		}
 
-		if err := packageDesc.SetupStep(command, unpackedDir); err != nil {
+		if err := packageDesc.SetupStep(command, packageBuildDir); err != nil {
 			log.Fatal(err)
 		}
 		// build
-		if err := packageDesc.BuildStep(command, unpackedDir); err != nil {
+		if err := packageDesc.BuildStep(command, packageBuildDir); err != nil {
 			log.Fatal(err)
 		}
 		// Install
-		if err := packageDesc.InstallStep(command, unpackedDir); err != nil {
+		if err := packageDesc.InstallStep(command, packageBuildDir); err != nil {
 			log.Fatal(err)
 		}
 		// Prepare package file
@@ -181,7 +195,7 @@ $make_install  : make install DESTDIR=${INSTALL_DIR-${prefix}} ${MAKE_INSTALL_OP
 		}
 		log.Println("Cleanup...")
 		defer os.RemoveAll(installDir)
-		defer os.RemoveAll(tarballDir)
+		defer os.RemoveAll(buildDir)
 		defer os.RemoveAll(installDBDir)
 	},
 }
