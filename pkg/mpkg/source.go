@@ -32,8 +32,9 @@ import (
 
 // Source contains uri and sha256 of the tarball
 type Source struct {
-	URI    string `yaml:"uri"`
-	Sha256 string `yaml:"sha256"`
+	URI          string `yaml:"uri"`
+	Sha256       string `yaml:"sha256"`
+	Decompressed bool   `yaml:"decompressed"`
 }
 
 // Download Download the tarball
