@@ -1,5 +1,5 @@
 PROJECT_NAME := "mypkg"
-PKG := "mypkg"
+PKG := "github.com/iisteev/mypkg"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 VERSION := "$(shell cat VERSION):$(shell git rev-parse HEAD)"
@@ -19,7 +19,7 @@ test: dep ## Run the unit tests
 	go test -short ${PKG_LIST}
 
 dep: ## Get the dependencies
-	go get -v -d ./...
+	go get -v ./...
 
 build-dev: dest-dir dep ## Build the binary file (development)
 	go build -v -o $(BUILD_DIR)/$(PKG) main.go
