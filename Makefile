@@ -27,6 +27,9 @@ build-dev: dest-dir dep ## Build the binary file (development)
 build: dest-dir dep ## Build the binary file for release
 	VERSION=$(VERSION) BUILD_DIR=$(BUILD_DIR) ./build.sh $(MYPKG_BUILD_OS)
 
+install: dest-dir dep ## Build the binary file for release
+	VERSION=$(VERSION) BUILD_DIR=$(BUILD_DIR) ./install.sh $(MYPKG_BUILD_OS)
+
 clean: ## Remove old build
 	go clean
 	rm -rf $(BUILD_DIR)
