@@ -28,7 +28,6 @@ import (
 	"fmt"
 	"hash"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -127,7 +126,7 @@ func UpdateLineInFile(fpath, oldLine, newLine string) error {
 		return err
 	}
 	output := strings.Join(text, "\n")
-	return ioutil.WriteFile(fpath, []byte(output), os.ModePerm)
+	return os.WriteFile(fpath, []byte(output), os.ModePerm)
 }
 
 func GetStepsFromMacros(steps []string) ([]string, error) {
@@ -149,7 +148,7 @@ func DeleteEmptyFolder(folder string) error {
 	if !info.IsDir() {
 		return err
 	}
-	files, err := ioutil.ReadDir(folder)
+	files, err := os.ReadDir(folder)
 	if err != nil {
 		return err
 	}
@@ -160,7 +159,7 @@ func DeleteEmptyFolder(folder string) error {
 		}
 		// re-evaluate files; after deleting subfolder
 		// we may have parent folder empty now
-		files, err = ioutil.ReadDir(folder)
+		files, err = os.ReadDir(folder)
 		if err != nil {
 			return err
 		}

@@ -25,7 +25,6 @@ package mpkg
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -167,12 +166,12 @@ func WritePackageXMLFile(rootPath, prefix string) error {
 		return fmt.Errorf("could not marchal xml: %v", err)
 	}
 	fpath := filepath.Join(frootPath, "/files.xml")
-	return ioutil.WriteFile(fpath, output, os.ModePerm)
+	return os.WriteFile(fpath, output, os.ModePerm)
 }
 
 func UnmarshalFilesXML(rootPath string) (*Set, error) {
 	fpath := filepath.Join(rootPath, "/files.xml")
-	fileContent, err := ioutil.ReadFile(fpath)
+	fileContent, err := os.ReadFile(fpath)
 	if err != nil {
 		return nil, err
 	}

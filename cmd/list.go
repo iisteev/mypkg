@@ -24,7 +24,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 
 	"os"
 	"strings"
@@ -44,7 +43,7 @@ Reads simply the dbDir for present folders.  Each folder is an installed package
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get the build directory
 		dbDir := getKeyFromConf("dbDir")
-		files, err := ioutil.ReadDir(dbDir)
+		files, err := os.ReadDir(dbDir)
 		if err != nil {
 			log.Fatal(err)
 		}

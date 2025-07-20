@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -54,7 +53,7 @@ for example:
 		prefix := getKeyFromConf("prefix")
 		var packageName string
 		// We look for in package name
-		files, err := ioutil.ReadDir(dbdir)
+		files, err := os.ReadDir(dbdir)
 		if err != nil {
 			log.Fatal(err)
 		}

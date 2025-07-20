@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -133,7 +132,7 @@ $make_install  : make install DESTDIR=${INSTALL_DIR-${prefix}} ${MAKE_INSTALL_OP
 			}
 			log.Infof("Tarball unpacked in %v\n", buildDir)
 			// look for the unpacked tarball folder in destination directory
-			folders, err := ioutil.ReadDir(buildDir)
+			folders, err := os.ReadDir(buildDir)
 			if err != nil {
 				log.Fatal(err)
 			}
