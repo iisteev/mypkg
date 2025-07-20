@@ -23,13 +23,13 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"context"
 	"os"
 
 	"path/filepath"
 	"strings"
 
 	"github.com/iisteev/mypkg/pkg/mpkg"
-	"github.com/mholt/archiver/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -72,7 +72,8 @@ var installCmd = &cobra.Command{
 		if err := os.MkdirAll(pkgPath, os.ModePerm); err != nil {
 			log.Fatal(err)
 		}
-		if err := archiver.Unarchive(tarball, "/"); err != nil {
+
+		if err := mpkg.Unarchive(context.Background(), tarball, "/"); err != nil {
 			log.Fatal(err)
 		}
 		if err := os.Rename(filepath.Join(prefixDir, "/files.xml"), filepath.Join(pkgPath, "/files.xml")); err != nil {

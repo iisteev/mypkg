@@ -91,11 +91,15 @@ func IsNotExist(path string) bool {
 func CreateDirIfNotExist(dir string) error {
 	if IsNotExist(dir) {
 		// create the path
-		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		if err := CreateDirWithPerm(dir, os.ModePerm); err != nil {
 			return fmt.Errorf("could not create directory %v; error: %v", dir, err)
 		}
 	}
 	return nil
+}
+
+func CreateDirWithPerm(dir string, mode os.FileMode) error {
+	return os.MkdirAll(dir, mode)
 }
 
 func GeFileBaseName(fileName string) string {

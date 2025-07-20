@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -189,7 +188,6 @@ $make_install  : make install DESTDIR=${INSTALL_DIR-${prefix}} ${MAKE_INSTALL_OP
 		}
 		// Archive it
 		log.Println("Packaging...")
-		pkgFullName = fmt.Sprintf("%s.tar.xz", pkgFullName)
 		if err := packageDesc.Archive(installDir, pkgFullName, prefixDir); err != nil {
 			log.Fatal(err)
 		}

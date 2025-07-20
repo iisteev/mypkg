@@ -22,12 +22,11 @@ THE SOFTWARE.
 package mpkg
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-
-	"github.com/mholt/archiver/v3"
 )
 
 // Source contains uri and sha256 of the tarball
@@ -83,5 +82,5 @@ func (s *Source) Verify(filepath string) error {
 
 // Unpack unpacks the given compressed file to destination
 func (s *Source) Unpack(filepath string, dest string) error {
-	return archiver.Unarchive(filepath, dest)
+	return Unarchive(context.Background(), filepath, dest)
 }

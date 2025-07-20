@@ -22,12 +22,11 @@ THE SOFTWARE.
 package mpkg
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/mholt/archiver/v3"
 )
 
 type PackageDesc struct {
@@ -72,73 +71,34 @@ func (s *PackageDesc) InstallStep(shell *Shell, dir string) error {
 	return shell.Exec(dir, steps)
 }
 
-func addToArchive(file File, installDir string, wr *archiver.TarXz) error {
-	info, err := os.Lstat(file.Path)
-	if err != nil {
-		return err
-	}
-
-	absPath := fmt.Sprintf("%s/%s", installDir, file.Path)
-	// open the file
-	ofile, err := os.Open(absPath)
-	if err != nil {
-		return err
-	}
-	defer ofile.Close()
-	// write it to the archive
-	return wr.Write(archiver.File{
-		FileInfo: archiver.FileInfo{
-			FileInfo:   info,
-			CustomName: file.Path,
-			SourcePath: file.Path,
-		},
-		ReadCloser: ofile,
-	})
-}
-
 func (s *PackageDesc) Archive(installDir, dest, prefix string) error {
+	curdir, err := filepath.Abs("./")
+	if err != nil {
+		return fmt.Errorf("unable to get current directory: %w", err)
+	}
 	frootPath := filepath.Join(installDir, prefix)
 	container, err := UnmarshalFilesXML(frootPath)
 	if err != nil {
 		return err
 	}
-	tarxz := archiver.NewTarXz()
-
-	binary, err := os.Create(dest)
-	if err != nil {
-		return err
-	}
-	if err := tarxz.Create(binary); err != nil {
-		return err
-	}
 
 	if err := os.Chdir(installDir); err != nil {
-		return fmt.Errorf("could not enter dir %v %v", installDir, err)
+		return fmt.Errorf("could not enter dir %s: %w", installDir, err)
 	}
+	filenames := map[string]string{}
+
 	for _, file := range container.Files {
-		if err := addToArchive(file, installDir, tarxz); err != nil {
-			return err
-		}
+		fullpath := filepath.Join(installDir, file.Path)
+		filenames[fullpath] = file.Path
 	}
 
-	if strings.HasPrefix(prefix, "/") {
-		prefix = strings.TrimPrefix(prefix, "/")
-	}
-	filesXML := &File{
-		Path: prefix + "/files.xml",
-		Mode: "0644",
-	}
+	prefix, _ = strings.CutPrefix(prefix, "/")
+	filesXMLPath := filepath.Join(prefix, "files.xml")
 
-	if err := addToArchive(*filesXML, installDir, tarxz); err != nil {
-		return err
-	}
-	// Close the in-memory archive so that it writes trailing data
-	if err := tarxz.Close(); err != nil {
-		return err
-	}
+	fullpath := filepath.Join(installDir, filesXMLPath)
+	filenames[fullpath] = filesXMLPath
 
-	if err = binary.Close(); err != nil {
-		return err
-	}
-	return nil
+	dest = filepath.Join(curdir, fmt.Sprintf("%s.%s.%s", dest, DefaultArchival, DefaultCompression))
+
+	return ArchiveFiles(context.Background(), installDir, dest, filenames, DefaultArchival, DefaultCompression)
 }
